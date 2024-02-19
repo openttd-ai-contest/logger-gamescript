@@ -38,32 +38,41 @@ function LoggerGS::Start()
 				month_passed++;
 				GSLog.Info("Month Passed: " + month_passed);
 				if (month_passed == 3) {
-					this.EndOfQuarter();
+					this.EndOfQuarter(current_date);
 					month_passed = 0;
 				}
 			}
 		}
 		last_loop_date = current_date;
 
-		// Loop with a frequency of five days
 		local ticks_used = GSController.GetTick() - loop_start_tick;
 		GSController.Sleep(max(1, 5 * 74 - ticks_used));
 	}
 }
 
-function LoggerGS::EndOfQuarter()
+function LoggerGS::EndOfQuarter(current_date)
 {
 	for (local c_id = GSCompany.COMPANY_FIRST; c_id <= GSCompany.COMPANY_LAST; c_id++) {
 		local mode = GSCompanyMode(c_id);
-		GSLog.Info("cid=" + c_id + ",name=" + GSCompany.GetName(c_id));
-		GSLog.Info("loadAmount=" + GSCompany.GetLoanAmount() +
+		if (GSCompany.ResolveCompanyID(c_id) == GSCompany.COMPANY_INVALID) {
+			continue;
+		}
+		local lastQuarter = GSCompany.CURRENT_QUARTER + 1;
+		if (lastQuarter > GSCompany.EARLIEST_QUARTER) {
+			continue;
+		}
+		local year = GSDate.GetYear(current_date);
+		local month = GSDate.GetMonth(current_date);
+		local day = GSDate.GetDayOfMonth(current_date);
+		GSLog.Info("date=" + year + "-" + month + "-" + day + ",cid=" + c_id + ",name=" + GSCompany .GetName(c_id));
+		GSLog.Info("loanAmount=" + GSCompany.GetLoanAmount() +
 			",maxLoanAmount=" + GSCompany.GetMaxLoanAmount() +
 			",bankBalance=" + GSCompany.GetBankBalance(c_id) +
-			",quarterlyIncome=" + GSCompany.GetQuarterlyIncome(c_id, GSCompany.EARLIEST_QUARTER) +
-			",quarterlyExpenses=" + GSCompany.GetQuarterlyExpenses(c_id, GSCompany.EARLIEST_QUARTER) +
-			",quarterlyCargoDelivered=" + GSCompany.GetQuarterlyCargoDelivered(c_id, GSCompany.EARLIEST_QUARTER) +
-			",quarterlyPerformanceRating=" + GSCompany.GetQuarterlyPerformanceRating(c_id, GSCompany.EARLIEST_QUARTER) +
-			",quarterlyCompanyValue=" + GSCompany.GetQuarterlyCompanyValue(c_id, GSCompany.EARLIEST_QUARTER)
+			",quarterlyIncome=" + GSCompany.GetQuarterlyIncome(c_id, lastQuarter) +
+			",quarterlyExpenses=" + GSCompany.GetQuarterlyExpenses(c_id, lastQuarter) +
+			",quarterlyCargoDelivered=" + GSCompany.GetQuarterlyCargoDelivered(c_id, lastQuarter) +
+			",quarterlyPerformanceRating=" + GSCompany.GetQuarterlyPerformanceRating(c_id, lastQuarter) +
+			",quarterlyCompanyValue=" + GSCompany.GetQuarterlyCompanyValue(c_id, lastQuarter)
 		);
 	}
 }
