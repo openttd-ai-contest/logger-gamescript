@@ -1,7 +1,9 @@
 require("version.nut");
-class GSLogger extends GSController {}
+class LoggerGS extends GSController {
+	_debug_level = GSController.GetSetting("debug_level");
+}
 
-function MainClass::Start()
+function LoggerGS::Start()
 {
 	GSController.Sleep(1);
 
@@ -10,11 +12,19 @@ function MainClass::Start()
 	while (true) {
 		local loop_start_tick = GSController.GetTick();
 
-		// Reached new year/month?
 		local current_date = GSDate.GetCurrentDate();
+		if (this._debug_level >= 1) {
+			local humanDate = {
+				year = GSDate.GetYear(current_date),
+				month = GSDate.GetMonth(current_date),
+				day = GSDate.GetDayOfMonth(current_date),
+			};
+			GSLog.Info("Current Date: " + humanDate);
+		}
 		if (last_loop_date != null) {
-			if (month != GSDate.GetMonth(last_loop_date)) {
+			if (GSDate.GetMonth(current_date) != GSDate.GetMonth(last_loop_date)) {
 				month_passed++;
+				GSLog.Info("Month Passed: " + month_passed);
 				if (month_passed == 3) {
 					this.EndOfQuarter();
 					month_passed = 0;
@@ -29,7 +39,7 @@ function MainClass::Start()
 	}
 }
 
-function MainClass::EndOfQuarter()
+function LoggerGS::EndOfQuarter()
 {
 	for (local c_id = GSCompany.COMPANY_FIRST; c_id <= GSCompany.COMPANY_LAST; c_id++) {
 		local mode = GSCompanyMode(c_id);
@@ -45,6 +55,6 @@ function MainClass::EndOfQuarter()
 			quarterlyCompanyValue = GSCompany.GetQuarterlyCompanyValue(c_id, GSCompany.EARLIEST_QUARTER)
 		};
 
-		GSLog.Info(stats.tostring());
+		GSLog.Info(stats);
 	}
 }
