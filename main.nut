@@ -65,7 +65,6 @@ function LoggerGS::EndOfQuarter(current_date)
 		if (lastQuarter > GSCompany.EARLIEST_QUARTER) {
 			continue;
 		}
-		GSLog.Info("date=" + year + "-" + month + "-" + day + ",cid=" + c_id + ",name=" + GSCompany .GetName(c_id));
 		GSLog.Info("cid=" + c_id +
             ",date=" + year + "-" + month + "-" + day +
             ",loanAmount=" + GSCompany.GetLoanAmount() +
@@ -75,7 +74,8 @@ function LoggerGS::EndOfQuarter(current_date)
 			",quarterlyExpenses=" + GSCompany.GetQuarterlyExpenses(c_id, lastQuarter) +
 			",quarterlyCargoDelivered=" + GSCompany.GetQuarterlyCargoDelivered(c_id, lastQuarter) +
 			",quarterlyPerformanceRating=" + GSCompany.GetQuarterlyPerformanceRating(c_id, lastQuarter) +
-			",quarterlyCompanyValue=" + GSCompany.GetQuarterlyCompanyValue(c_id, lastQuarter)
+			",quarterlyCompanyValue=" + GSCompany.GetQuarterlyCompanyValue(c_id, lastQuarter) +
+		    ",name=" + GSCompany.GetName(c_id)
 		);
 	}
     if (year >= this._end_year) {
