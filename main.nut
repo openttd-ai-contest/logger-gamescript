@@ -1,8 +1,9 @@
 require("version.nut");
 class LoggerGS extends GSController {
 	_debug_level = GSController.GetSetting("debug_level");
-
-	function Start();
+    _end_year = GSController.GetSetting("end_year");
+	
+    function Start();
 	function Save();
 	function Load(version, data);
 	function EndOfQuarter();
@@ -52,6 +53,9 @@ function LoggerGS::Start()
 
 function LoggerGS::EndOfQuarter(current_date)
 {
+    local year = GSDate.GetYear(current_date);
+    local month = GSDate.GetMonth(current_date);
+    local day = GSDate.GetDayOfMonth(current_date);
 	for (local c_id = GSCompany.COMPANY_FIRST; c_id <= GSCompany.COMPANY_LAST; c_id++) {
 		local mode = GSCompanyMode(c_id);
 		if (GSCompany.ResolveCompanyID(c_id) == GSCompany.COMPANY_INVALID) {
@@ -61,11 +65,10 @@ function LoggerGS::EndOfQuarter(current_date)
 		if (lastQuarter > GSCompany.EARLIEST_QUARTER) {
 			continue;
 		}
-		local year = GSDate.GetYear(current_date);
-		local month = GSDate.GetMonth(current_date);
-		local day = GSDate.GetDayOfMonth(current_date);
 		GSLog.Info("date=" + year + "-" + month + "-" + day + ",cid=" + c_id + ",name=" + GSCompany .GetName(c_id));
-		GSLog.Info("loanAmount=" + GSCompany.GetLoanAmount() +
+		GSLog.Info("cid=" + c_id +
+            ",date=" + year + "-" + month + "-" + day +
+            ",loanAmount=" + GSCompany.GetLoanAmount() +
 			",maxLoanAmount=" + GSCompany.GetMaxLoanAmount() +
 			",bankBalance=" + GSCompany.GetBankBalance(c_id) +
 			",quarterlyIncome=" + GSCompany.GetQuarterlyIncome(c_id, lastQuarter) +
@@ -75,4 +78,7 @@ function LoggerGS::EndOfQuarter(current_date)
 			",quarterlyCompanyValue=" + GSCompany.GetQuarterlyCompanyValue(c_id, lastQuarter)
 		);
 	}
+    if (year >= this._end_year) {
+        GSLog.Info("done");
+    }
 }
