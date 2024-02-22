@@ -24,9 +24,8 @@ class LoggerGSRegister extends GSInfo {
 			description = "Year when the game ends",
 			easy_value = 1985, medium_value = 1985, hard_value = 1985, custom_value = 1985,
 			flags = CONFIG_INGAME,
-			min_value = 1976,
+			min_value = 1950,
 			max_value = 2050});
-		AddLabels("debug_level", {_1 = "1: Info"} );
 	}
 }
 

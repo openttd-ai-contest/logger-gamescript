@@ -2,7 +2,7 @@ require("version.nut");
 class LoggerGS extends GSController {
 	_debug_level = GSController.GetSetting("debug_level");
     _end_year = GSController.GetSetting("end_year");
-	
+
     function Start();
 	function Save();
 	function Load(version, data);
@@ -22,6 +22,8 @@ function LoggerGS::Start()
 {
 	GSController.Sleep(1);
 
+	GSLog.Info("Running with settings: debug_level = " + this._debug_level + ", end_year = " + this._end_year);
+
 	local last_loop_date = GSDate.GetCurrentDate();
 	local month_passed = 0;
 	while (true) {
@@ -37,7 +39,9 @@ function LoggerGS::Start()
 		if (last_loop_date != null) {
 			if (GSDate.GetMonth(current_date) != GSDate.GetMonth(last_loop_date)) {
 				month_passed++;
-				GSLog.Info("Month Passed: " + month_passed);
+				if (this._debug_level >= 1) {
+					GSLog.Info("Month Passed: " + month_passed);
+				}
 				if (month_passed == 3) {
 					this.EndOfQuarter(current_date);
 					month_passed = 0;
@@ -65,8 +69,8 @@ function LoggerGS::EndOfQuarter(current_date)
 		if (lastQuarter > GSCompany.EARLIEST_QUARTER) {
 			continue;
 		}
-		GSLog.Info("cid=" + c_id +
-            ",date=" + year + "-" + month + "-" + day +
+		GSLog.Info("date=" + year + "-" + month + "-" + day +
+			",cid=" + c_id +
             ",loanAmount=" + GSCompany.GetLoanAmount() +
 			",maxLoanAmount=" + GSCompany.GetMaxLoanAmount() +
 			",bankBalance=" + GSCompany.GetBankBalance(c_id) +
